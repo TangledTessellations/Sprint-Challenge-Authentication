@@ -49,7 +49,10 @@ class Jokes extends Component {
     return (
         <AllJokes>
            <ul>
-               {this.state.jokes.map(joke => <Li key={joke.id}>{joke}</Li>)}
+               {this.state.jokes.map(joke => <Li key={joke.id}>ID: {joke.id}<br/> 
+                                                                Type: {joke.type}<br/>
+                                                                Setup: {joke.setup}<br/>
+                                                                punchline: {joke.punchline}<br/></Li>)}
            </ul>
            <div><button onClick={this.logoutHandler}>Logout</button></div>
         </AllJokes>
