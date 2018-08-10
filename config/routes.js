@@ -29,6 +29,25 @@ function generateToken(user){
   return jwt.sign(payload, secret, options)
 }
 
+async function getUser(req,res) {
+  let { username } = req.body
+  try{
+      await db('users')
+          .where({ username })
+          .first()
+          .then(user => {
+              if(user){
+                  req.userIn = user
+                  next()
+              }else{
+                  res.status(500).json({error: "Error with user name or password"})
+              }
+          })
+  }catch(err){
+      res.status(500).json({error: "Error with user name or password"})
+  }
+}
+
 async function register(req, res, next) {
   // implement user registration
   const credentials = req.body
@@ -55,8 +74,21 @@ async function register(req, res, next) {
 
 }
 
-function login(req, res) {
+async function login(req, res) {
   // implement user login
+  try{
+    let user = await db('users').where({username: req.body.username})
+    if(user.length < 1) {throw Error({error: "Problem getting that user"})}
+    
+    user = user[0]
+    if(bcrypt.compareSync(req.body.password, user.password)){
+      const token = generateToken(user)
+      res.status(200).json(token)
+    }else{ res.status(400).json({error: "Problem with validation"})}
+  }catch(err){
+    return res.status(401).json({error: "Problem Logging In"})
+  }
+
 }
 
 function getJokes(req, res) {
