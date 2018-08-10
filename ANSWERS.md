@@ -1,7 +1,9 @@
 <!-- Answers to the Short Answer Essay Questions go here -->
 
 1.  Describe Middleware, Sessions (as we know them in express), bcrypt and JWT.
-
+    Middleware behaves in Express in much the same way as it behaves in Redux. It sits between the an incoming request and it's final processing point, in Redux the application state, in Express the return value from the database. Express middleware usually intercepts an incoming request, and performs any number of actions on that request, be it authentication, retrieving an intermediate value, or modifying the request based on input. Session in express are areas of memory on a server, which are created in response to a request for prohibited data. The server validates that the user has access to this data, and returns a cookie which is simply a plain text object which is stored on the users machine. The user is then expected to send back this cookie with subsequent requests, so that the server may check that the user is logged in. JWT's work in much a similar fashion, but the server doesnt require any space to store a log of which cookies are "active". JWT's consist of three parts, a header, payload and signature, the header where all the important meta data goes, the payload where all pertinent, app specific information goes, and the signature, which mainly plays a role in encoding of the first two parts. bcrypt is a library that we use to encode our custom made 3 parts into a functional JWT. 
 2.  What does bcrypt do in order to prevent attacks?
+    bcrypt finds a good balance of being fast enough to not impede validation traffic, while still being slow enough to not allow it to be run 14353723843274432 times without taking forever. This makes it harder for hackers to creat rainbow tables of prehashed passwords which can be used to attack certain systems. It also incorporates a salt, or a random secret string/key, which adds an additional layer of encryption to a plain text password
 
 3.  What are the three parts of the JSON Web Token?
+    See above in question 1
