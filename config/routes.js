@@ -29,24 +29,6 @@ function generateToken(user){
   return jwt.sign(payload, secret, options)
 }
 
-async function getUser(req,res) {
-  let { username } = req.body
-  try{
-      await db('users')
-          .where({ username })
-          .first()
-          .then(user => {
-              if(user){
-                  req.userIn = user
-                  next()
-              }else{
-                  res.status(500).json({error: "Error with user name or password"})
-              }
-          })
-  }catch(err){
-      res.status(500).json({error: "Error with user name or password"})
-  }
-}
 
 async function register(req, res, next) {
   // implement user registration
@@ -59,18 +41,27 @@ async function register(req, res, next) {
   const hash = bcrypt.hashSync(credentials.password, 10)
   credentials.password = hash
   
-  await db('users')
-    .insert(credentials)
-    .then(function(ids) {
-      db('users')
-        .where({ id: ids[0] })
-        .first()
-        .then(user => {
-          const token = generateToken(user)
-          res.status(201).json(token)
-        })
-    })
-    .catch(next)
+  try{
+    const ids = await db('users').insert(credentials)
+    const user = await db('users').where({ id: ids[0] }).first()
+    const token = generateToken(user)
+    res.status(201).json(token)
+  }catch(err){
+    res.status(500).json({error: "Problem with registering user"})
+  }
+
+  // db('users')
+  //   .insert(credentials)
+  //   .then(function(ids) {
+  //     db('users')
+  //       .where({ id: ids[0] })
+  //       .first()
+  //       .then(user => {
+  //         const token = generateToken(user)
+  //         res.status(201).json(token)
+  //       })
+  //   })
+  //   .catch(next)
 
 }
 
